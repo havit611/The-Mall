@@ -1,0 +1,12 @@
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/AccountServiceApplication.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/entity/Account.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/dto/LoginRequest.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/config/SecurityConfig.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/controller/AuthController.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/util/JwtUtil.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/service/impl/AccountServiceImpl.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/repository/AccountRepository.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/service/AccountService.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/exception/GlobalExceptionHandler.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/controller/AccountController.java
+/Users/alaia/Desktop/TheMall/account-service/src/main/java/com/themall/accountservice/dto/AccountRequest.java

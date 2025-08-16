@@ -1,0 +1,17 @@
+spring:
+  cassandra:
+    keyspace-name: test_order_service
+    contact-points: localhost
+    port: 9042
+    local-datacenter: datacenter1
+    schema-action: create-if-not-exists
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: test-order-service-group
+
+logging:
+  level:
+    com.themall.orderservice: DEBUG
+    org.springframework.data.cassandra: DEBUG
+    org.apache.kafka: WARN

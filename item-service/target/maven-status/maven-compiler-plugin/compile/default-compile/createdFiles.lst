@@ -1,0 +1,5 @@
+com/themall/itemservice/service/impl/InventoryServiceImpl.class
+com/themall/itemservice/service/InventoryService.class
+com/themall/itemservice/service/impl/ItemServiceImpl.class
+com/themall/itemservice/repository/ItemRepository.class
+com/themall/itemservice/controller/InventoryController.class
