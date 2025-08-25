@@ -1,48 +1,59 @@
 package com.themall.paymentservice.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Schema(description = "支付信息")
-@Entity
-@Table(name = "payments")
+@Table("payments")
 public class Payment {
-    
-    @Schema(description = "支付ID", example = "pay-12345")
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "payment_id")
+
+    @PrimaryKey(value = "payment_id", forceQuote = true)
     private String paymentId;
-    
-    @Schema(description = "关联的订单ID", example = "order-12345")
-    @Column(name = "order_id", nullable = false)
+
+    @Column(value = "order_id", forceQuote = true)
     private String orderId;
-    
-    @Schema(description = "支付金额", example = "99.99")
-    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
+
+    @Column(value = "amount", forceQuote = true)
     private BigDecimal amount;
-    
-    @Schema(description = "支付状态", example = "SUCCESS")
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+
+    @Column(value = "status", forceQuote = true)
     private PaymentStatus status;
-    
-    @Schema(description = "幂等性键", example = "idempotency-12345")
-    @Column(name = "idempotency_key", unique = true, nullable = false)
-    private String idempotencyKey;
-    
-    public Payment() {}
-    
-    public Payment(String paymentId, String orderId, BigDecimal amount, PaymentStatus status, String idempotencyKey) {
-        this.paymentId = paymentId;
-        this.orderId = orderId;
-        this.amount = amount;
-        this.status = status;
-        this.idempotencyKey = idempotencyKey;
+
+    @Column(value = "created_at", forceQuote = true)
+    private LocalDateTime createdAt;
+
+    @Column(value = "updated_at", forceQuote = true)
+    private LocalDateTime updatedAt;
+
+    @Column(value = "refunded_at", forceQuote = true)
+    private LocalDateTime refundedAt;
+
+    public enum PaymentStatus {
+        PENDING,
+        SUCCESS,
+        FAILED,
+        UPDATED,
+        REFUNDED
     }
 
+    // Constructor
+    public Payment(Object o, String orderId, BigDecimal amount, PaymentStatus success, String s) {
+        this.paymentId = UUID.randomUUID().toString();
+        this.createdAt = LocalDateTime.now();
+        this.status = PaymentStatus.PENDING;
+    }
+
+    public Payment(String orderId, BigDecimal amount) {
+        this(null, request.getOrderId(), request.getAmount(), PaymentStatus.SUCCESS, String.valueOf(System.currentTimeMillis()));
+        this.orderId = orderId;
+        this.amount = amount;
+    }
+
+    // Getters and Setters
     public String getPaymentId() {
         return paymentId;
     }
@@ -75,21 +86,27 @@ public class Payment {
         this.status = status;
     }
 
-    public String getIdempotencyKey() {
-        return idempotencyKey;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setIdempotencyKey(String idempotencyKey) {
-        this.idempotencyKey = idempotencyKey;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
-    
-    @Schema(description = "支付状态枚举")
-    public enum PaymentStatus {
-        @Schema(description = "支付成功")
-        SUCCESS, 
-        @Schema(description = "支付失败")
-        FAILED, 
-        @Schema(description = "已退款")
-        REFUNDED
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getRefundedAt() {
+        return refundedAt;
+    }
+
+    public void setRefundedAt(LocalDateTime refundedAt) {
+        this.refundedAt = refundedAt;
     }
 }

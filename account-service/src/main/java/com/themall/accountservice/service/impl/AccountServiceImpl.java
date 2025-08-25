@@ -82,16 +82,18 @@ public class AccountServiceImpl implements AccountService {
     public String login(LoginRequest request) {
         // 根据邮箱查找账户
         Account account = accountRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new RuntimeException("Invalid credential"));
 
         // 验证密码
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (!encoder.matches(request.getPassword(), account.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new RuntimeException("Invalid credential");
         }
 
         // 生成并返回JWT令牌
         return jwtUtil.generateToken(account.getAccountId());
+
+
     }
 
     @Override

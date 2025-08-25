@@ -79,6 +79,12 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -96,6 +102,18 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>cassandra</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.themall</groupId>
+            <artifactId>item-service</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.themall</groupId>
+            <artifactId>account-service</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

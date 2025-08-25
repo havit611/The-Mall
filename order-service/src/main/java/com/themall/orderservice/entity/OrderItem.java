@@ -1,10 +1,7 @@
 package com.themall.orderservice.entity;
 
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass;
-import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
-import org.springframework.data.cassandra.core.mapping.Table;
+import org.springframework.data.cassandra.core.mapping.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -47,8 +44,10 @@ public class OrderItem {
     
     @PrimaryKey
     private OrderItemKey key;
+    @Column(value = "item_name", forceQuote = true)
     private String itemName;
     private Integer quantity;
+    @Column(value = "unit_price", forceQuote = true)
     private BigDecimal unitPrice;
 
     public OrderItem() {}

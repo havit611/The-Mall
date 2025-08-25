@@ -29,14 +29,14 @@ public class AccountController {
 
     // 更新账户信息
     @PutMapping("/{accountId}")
-    public Account updateAccount(@PathVariable String accountId, 
+    public Account updateAccount(@PathVariable("accountId") String accountId,
                                 @Valid @RequestBody AccountRequest request) {
         return accountService.updateAccount(accountId, request);
     }
 
     // 获取账户信息
     @GetMapping("/{accountId}")
-    public Account getAccount(@PathVariable String accountId) {
+    public Account getAccount(@PathVariable("accountId") String accountId) {
         return accountService.getAccount(accountId);
     }
 }

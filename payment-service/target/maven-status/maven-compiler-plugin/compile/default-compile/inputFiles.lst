@@ -1,9 +1,0 @@
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/PaymentServiceApplication.java
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/config/KafkaConfig.java
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/dto/PaymentRequest.java
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/controller/PaymentController.java
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/entity/Payment.java
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/repository/PaymentRepository.java
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/service/impl/PaymentServiceImpl.java
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/config/OpenApiConfig.java
-/Users/alaia/Desktop/TheMall/payment-service/src/main/java/com/themall/paymentservice/service/PaymentService.java

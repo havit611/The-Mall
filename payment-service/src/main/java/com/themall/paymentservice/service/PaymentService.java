@@ -5,7 +5,7 @@ import com.themall.paymentservice.entity.Payment;
 
 public interface PaymentService {
     
-    Payment submitPayment(PaymentRequest request, String idempotencyKey);
+    Payment submitPayment(PaymentRequest request);
     
     Payment updatePayment(String paymentId);
     

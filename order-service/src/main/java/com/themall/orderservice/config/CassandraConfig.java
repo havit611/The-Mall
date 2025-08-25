@@ -1,4 +1,4 @@
-package com.themall.orderservice.config;
+package com.themall.paymentservice.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
@@ -14,7 +14,7 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 
     @Override
     protected String getKeyspaceName() {
-        return "order_service";
+        return "payment_service";
     }
 
     @Override
@@ -37,14 +37,13 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
         return SchemaAction.CREATE_IF_NOT_EXISTS;
     }
 
-    // 键空间的创建：写入操作会先记录到commit log；使用简单复制策略，复制因子为1
     @Override
     protected List<CreateKeyspaceSpecification> getKeyspaceCreations() {
         return Collections.singletonList(
-            CreateKeyspaceSpecification.createKeyspace("order_service")
-                .ifNotExists()
-                .with(KeyspaceOption.DURABLE_WRITES, true)
-                .withSimpleReplication(1)
+                CreateKeyspaceSpecification.createKeyspace("payment_service")
+                        .ifNotExists()
+                        .with(KeyspaceOption.DURABLE_WRITES, true)
+                        .withSimpleReplication(1)
         );
     }
 }

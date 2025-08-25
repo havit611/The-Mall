@@ -11,8 +11,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -28,6 +30,7 @@ public class ItemServiceImpl implements ItemService {
 
     //
     @Override
+    @Transactional
     public Item createItem(ItemRequest request) {
         // 1. 验证UPC唯一性：检查数据库中是否已存在相同UPC的商品，防止重复录入
         if (itemRepository.existsByUpc(request.getUpc())) {
@@ -44,10 +47,10 @@ public class ItemServiceImpl implements ItemService {
 
         // 3. 保存商品到数据库
         Item saved = itemRepository.save(item);
-
         // 4. 创建初始库存记录：为新商品自动创建库存记录，初始数量为0
         Inventory inventory = new Inventory();
-        inventory.setItemId(saved.getItemId());  // 关联刚创建的商品ID
+        // inventory.setItemId(item.getUpc());  // 关联刚创建的商品ID
+        inventory.setItemId(saved.getItemId());
         inventory.setAvailableUnits(0);
 
         // 5. 保存库存记录到数据库：完成商品-库存的关联关系
@@ -91,12 +94,32 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void deleteItem(String itemId) {
-        if (!itemRepository.existsById(itemId)) {
-            throw new RuntimeException("Item not found");
+        // 先假设传入的是 UPC，尝试查找
+        Optional<Item> itemByUpc = itemRepository.findByUpc(itemId);
+
+        String actualId;
+        if (itemByUpc.isPresent()) {
+            // 找到了，说明传入的是 UPC，获取实际的 MongoDB ID
+            actualId = itemByUpc.get().getItemId();
+        } else {
+            // 没找到，说明传入的可能是 MongoDB ID，直接使用
+            actualId = itemId;
+            // 验证这个 ID 是否存在
+            if (!itemRepository.existsById(actualId)) {
+                throw new RuntimeException("Item not found");
+            }
         }
-        
-        itemRepository.deleteById(itemId);
-        inventoryRepository.deleteByItemId(itemId);
+
+        // 使用实际的 MongoDB ID 进行删除
+        itemRepository.deleteById(actualId);
+        // for consistency: also delet the inventory
+        inventoryRepository.deleteByItemId(actualId);
+//        if (!itemRepository.existsById(itemId)) {
+//            throw new RuntimeException("Item not found");
+//        }
+//
+//        itemRepository.deleteById(itemId);
+//        inventoryRepository.deleteByItemId(itemId);
     }
 
 //    @Override

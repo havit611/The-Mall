@@ -20,24 +20,24 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public Inventory getInventory(String itemId) {
         // Precondition Validation
-        if (!itemRepository.existsById(itemId)) {
+        if (!itemRepository.existsByUpc(itemId)) {
             throw new RuntimeException("Item not found");
         }
-        
         return inventoryRepository.findByItemId(itemId)
             .orElseThrow(() -> new RuntimeException("Inventory not found"));
     }
 
+    // TODO: use optimistic locking to preventing concurrent overselling issues
     @Override
     public Inventory updateInventory(String itemId, Integer units) {
         // Precondition Validation
-        if (!itemRepository.existsById(itemId)) {
+        if (!itemRepository.existsByUpc(itemId)) {
             throw new RuntimeException("Item not found");
         }
-        
+
         Inventory inventory = inventoryRepository.findByItemId(itemId)
             .orElse(createDefaultInventory(itemId));
-        
+
         inventory.setAvailableUnits(units);
         return inventoryRepository.save(inventory);
     }

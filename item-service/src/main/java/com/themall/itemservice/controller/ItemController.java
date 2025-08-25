@@ -28,25 +28,29 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.CREATED).body(item); // 返回201
     }
 
+//    @GetMapping("/{itemId}")
+//    public Item getItemById(@PathVariable String itemId) {
+//        return itemService.getItemById(itemId);
+//    }
     @GetMapping("/{itemId}")
-    public Item getItemById(@PathVariable String itemId) {
+    public Item getItemById(@PathVariable("itemId") String itemId) {
         return itemService.getItemById(itemId);
     }
 
     @GetMapping("/upc/{upc}")
-    public Item getItemByUpc(@PathVariable String upc) {
+    public Item getItemByUpc(@PathVariable("upc") String upc) {
         return itemService.getItemByUpc(upc);
     }
 
     @PutMapping("/{itemId}")
-    public Item updateItem(@PathVariable String itemId, @Valid @RequestBody ItemRequest request) {
+    public Item updateItem(@PathVariable("itemId") String itemId, @Valid @RequestBody ItemRequest request) {
         return itemService.updateItem(itemId, request);
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<Void> deleteItem(@PathVariable String itemId) {
+    public ResponseEntity<Void> deleteItem(@PathVariable("itemId") String itemId) {
         itemService.deleteItem(itemId);
-        return ResponseEntity.noContent().build(); //noContent() 返回一个 HTTP 状态码为 204 No Content 的响应
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

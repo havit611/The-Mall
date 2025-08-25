@@ -1,21 +1,23 @@
 package com.themall.orderservice.entity;
 
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.data.cassandra.core.mapping.*;
+
 @Table("orders")
 public class Order {
-    
-    @PrimaryKey
+
+    @PrimaryKey(value = "order_id", forceQuote = true)
     private String orderId;
-    
+    @Column(value = "user_id", forceQuote = true)
     private String userId;
     private String status;
+    @Column(value = "total_amount", forceQuote = true)
     private BigDecimal totalAmount;
+    @Column(value = "created_at", forceQuote = true)
     private LocalDateTime createdAt;
 
     public Order() {}

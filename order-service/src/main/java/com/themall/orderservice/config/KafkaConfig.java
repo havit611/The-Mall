@@ -14,48 +14,58 @@ import org.springframework.kafka.core.ProducerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-// 配置生产者工厂、消息模板和主题定义
 @Configuration
 public class KafkaConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-
-    // 配置Kafka生产者工厂：创建Kafka生产者实例的工厂，定义生产者的核心配置
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        // 1. 配置Kafka集群地址：生产者连接到哪个Kafka集群
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        // 2. 配置Key Serializer：将消息Key从Java String转换为字节数组
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        // 3. 配置Value Serializer：将消息内容从Java String转换为字节数组
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+
+        // 添加可靠性配置
+        configProps.put(ProducerConfig.ACKS_CONFIG, "all");
+        configProps.put(ProducerConfig.RETRIES_CONFIG, 3);
+        configProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
-    // 配置KafkaTemplate
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
-        // 使用上面配置的生产者工厂创建模板
         return new KafkaTemplate<>(producerFactory());
     }
 
+    // ========== Order Service 发布的事件 ==========
 
-    // 定义并自动创建Kafka orderEvents topic：（如果不存在）应用启动时自动在Kafka中创建所需的主题
-    // 3个分区 ～ 最多3个消费者并行消费
+    // 订单领域事件 - 所有订单相关的事件
     @Bean
-    public NewTopic orderEventsTopic() {
-        return TopicBuilder.name("order-events")
-            .partitions(3)
-            .replicas(1)
-            .build();
+    public NewTopic orderDomainEvents() {
+        return TopicBuilder.name("order-domain-events")
+                .partitions(3)
+                .replicas(1)
+                .build();
     }
 
-    // TODO：could have paymentEventsTopic, userActivityTopic, inventoryUpdatesTopic, notificationsTopic later
-    // @Bean
-    //    public NewTopic paymentEventsTopic() {
-    //
-    //    }
+    // 支付请求事件 - 发送给支付服务的请求
+    @Bean
+    public NewTopic paymentRequestEvents() {
+        return TopicBuilder.name("payment-request-events")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    // 库存请求事件 - 发送给库存服务的请求
+    @Bean
+    public NewTopic inventoryRequestEvents() {
+        return TopicBuilder.name("inventory-request-events")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
 }

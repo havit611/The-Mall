@@ -9,8 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-// 接收和处理所有订单相关的HTTP请求
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -24,25 +25,61 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@Valid @RequestBody CreateOrderRequest request) {
+        // 从 Security Context 获取当前用户
+        String authenticatedUserId = getCurrentUserId();
+
+        // validate token first
+        if (!authenticatedUserId.equals(request.getUserId())) {
+            throw new RuntimeException("User ID mismatch - you can only create orders for yourself");
+        }
+
         Order order = orderService.createOrder(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(order); // CREATED：201
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
-
-    @DeleteMapping("/{orderId}")
-    public ResponseEntity<Void> cancelOrder(@PathVariable String orderId) {
-        orderService.cancelOrder(orderId);
-        return ResponseEntity.noContent().build(); // 204
-    }
-
-    // 先验证@Valid：如果用户提供了totalAmount字段，其值必须为正数(见UpdateOrderRequest) ；然后更新数据，并返回
-    @PutMapping("/{orderId}")
-    public Order updateOrder(@PathVariable String orderId, @Valid @RequestBody UpdateOrderRequest request) {
-        return orderService.updateOrder(orderId, request);
-    }
-
 
     @GetMapping("/{orderId}")
     public Order getOrder(@PathVariable String orderId) {
-        return orderService.getOrder(orderId);
+        String authenticatedUserId = getCurrentUserId();
+
+        Order order = orderService.getOrder(orderId);
+        if (!authenticatedUserId.equals(order.getUserId())) {
+            throw new RuntimeException("Access denied - you can only view your own orders");
+        }
+
+        return order;
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> cancelOrder(@PathVariable("orderId") String orderId) {
+        String authenticatedUserId = getCurrentUserId();
+
+        Order order = orderService.getOrder(orderId);
+        if (!authenticatedUserId.equals(order.getUserId())) {
+            throw new RuntimeException("Access denied - you can only cancel your own orders");
+        }
+
+        orderService.cancelOrder(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{orderId}")
+    public Order updateOrder(@PathVariable("orderId") String orderId,
+                             @Valid @RequestBody UpdateOrderRequest request) {
+        String authenticatedUserId = getCurrentUserId();
+
+        Order order = orderService.getOrder(orderId);
+        if (!authenticatedUserId.equals(order.getUserId())) {
+            throw new RuntimeException("Access denied - you can only update your own orders");
+        }
+
+        return orderService.updateOrder(orderId, request);
+    }
+
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getName(); // 这里返回的是 userId
+        }
+        throw new RuntimeException("User not authenticated");
     }
 }

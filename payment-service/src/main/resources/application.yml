@@ -14,10 +14,23 @@ spring:
       ddl-auto: update
     show-sql: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9094
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true  # 幂等性核心配置
+        retries: 3  # 可选：重试次数
+        properties:
+          max.in.flight.requests.per.connection: 1  # 可选：确保消息顺序
+    consumer:
+      group-id: order-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      auto-offset-reset: latest
+#      enable-auto-commit: false #禁用消费者自动提交偏移量
+#      properties:
+#        isolation.level: read_committed #消费者只能读取已成功提交的事务写入的消息
 
 # Swagger/OpenAPI 配置
 springdoc:

@@ -24,12 +24,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     // 创建支付订单，通过idempotencyKey确保同一请求不会重复创建支付记录；返回支付记录
     @Override
-    public Payment submitPayment(PaymentRequest request, String idempotencyKey) {
+    public Payment submitPayment(PaymentRequest request) {
         // 1. 记录调试日志，获得订单ID和idempotencyKey
-        log.debug("Submitting payment for order: {}, idempotencyKey: {}", request.getOrderId(), idempotencyKey);
+        log.debug("Submitting payment for order: {}, idempotencyKey: {}", request.getOrderId());
 
         // 2: 根据【idempotencyKey】查询数据库，检查是否已存在相同的支付记录
-        return paymentRepository.findByIdempotencyKey(idempotencyKey)
+        return paymentRepository.findByorderId(request.getOrderId())
             .orElseGet(() -> {
                 // 3. 【数据库级别的去重】：只有当找不到相同的idempotencyKey时才创建新支付
                 Payment payment = new Payment(
@@ -37,19 +37,19 @@ public class PaymentServiceImpl implements PaymentService {
                     request.getOrderId(), 
                     request.getAmount(), 
                     Payment.PaymentStatus.SUCCESS, 
-                    idempotencyKey
+                    String.valueOf(System.currentTimeMillis())
                 );
 
                 // 4. 将支付记录持久化到数据库
                 Payment saved = paymentRepository.save(payment);
                 log.info("Payment created successfully: {}", saved.getPaymentId());
 
-                // 5. 构造Kafka消息
-                String message = saved.getOrderId() + ":" + saved.getStatus() + ":" + System.currentTimeMillis();
-                // 6. 发送支付事件到Kafka消息队列，通知其他微服务
-                kafkaTemplate.send("payment-events", message);
-                log.debug("Kafka message sent: {}", message);
-                
+//                // 5. 构造Kafka消息
+//                String message = saved.getOrderId() + ":" + saved.getStatus() + ":" + System.currentTimeMillis();
+//                // 6. 发送支付事件到Kafka消息队列，通知其他微服务
+//                kafkaTemplate.send("payment-events", message);
+//                log.debug("Kafka message sent: {}", message);
+//
                 return saved;
             });
     }

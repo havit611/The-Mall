@@ -15,7 +15,5 @@ import java.util.Optional;
 public interface InventoryRepository extends MongoRepository<Inventory, String> {     // use Spring Data MongoDB
     Optional<Inventory> findByItemId(String itemId);
     void deleteByItemId(String itemId);
-    // 添加分页搜索方法
-    Page<Item> findByItemNameContainingIgnoreCase(String itemName, Pageable pageable);
-    Page<Item> findByUpcContaining(String upc, Pageable pageable);
+
 }

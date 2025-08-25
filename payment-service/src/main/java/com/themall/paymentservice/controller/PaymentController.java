@@ -28,20 +28,10 @@ public class PaymentController {
 
     // submitPayment - 提交新的支付请求，通过 Idempotency-Key 请求头实现幂等性，防止重复支付
     @Operation(summary = "Submit Payment", description = "Submit a new payment request with idempotency support")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Payment created successfully",
-                    content = @Content(schema = @Schema(implementation = Payment.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "409", description = "Idempotency key conflict")
-    })
     @PostMapping
-    public ResponseEntity<Payment> submitPayment(
-            @Parameter(description = "Payment request information", required = true)
-            @Valid @RequestBody PaymentRequest request,
-            @Parameter(description = "Idempotency key，ensure the same request is not processed multiple times", required = true)
-            @RequestHeader("Idempotency-Key") String idempotencyKey) {
+    public ResponseEntity<Payment> submitPayment(@RequestBody PaymentRequest request) {
         
-        Payment payment = paymentService.submitPayment(request, idempotencyKey);
+        Payment payment = paymentService.submitPayment(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(payment);
     }
 

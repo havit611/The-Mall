@@ -36,7 +36,7 @@ echo "✅ Cassandra is ready"
 
 # Wait for Kafka
 echo "🔄 Waiting for Kafka..."
-while ! docker exec themall-kafka kafka-broker-api-versions --bootstrap-server localhost:9092 > /dev/null 2>&1; do
+while ! docker exec themall-kafka kafka-broker-api-versions --bootstrap-server localhost:9094 > /dev/null 2>&1; do
     echo "   Kafka not ready yet, waiting..."
     sleep 3
 done
@@ -84,8 +84,8 @@ echo "✅ Cassandra tables created"
 
 # Create Kafka topics
 echo "📊 Creating Kafka topics..."
-docker exec themall-kafka kafka-topics --create --topic order-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1 --if-not-exists
-docker exec themall-kafka kafka-topics --create --topic payment-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1 --if-not-exists
+docker exec themall-kafka kafka-topics --create --topic order-events --bootstrap-server localhost:9094 --partitions 1 --replication-factor 1 --if-not-exists
+docker exec themall-kafka kafka-topics --create --topic payment-events --bootstrap-server localhost:9094 --partitions 1 --replication-factor 1 --if-not-exists
 echo "✅ Kafka topics created"
 
 echo ""
