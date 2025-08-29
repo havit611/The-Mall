@@ -1,35 +1,34 @@
 package com.themall.paymentservice.entity;
 
-import org.springframework.data.cassandra.core.mapping.Column;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
-
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-@Table("payments")
+@Entity
+@Table(name = "payments")
 public class Payment {
 
-    @PrimaryKey(value = "payment_id", forceQuote = true)
+    @Id
+    @Column(name = "payment_id")
     private String paymentId;
 
-    @Column(value = "order_id", forceQuote = true)
+    @Column(name = "order_id", unique = true)
     private String orderId;
 
-    @Column(value = "amount", forceQuote = true)
+    @Column(name = "amount", precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(value = "status", forceQuote = true)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private PaymentStatus status;
 
-    @Column(value = "created_at", forceQuote = true)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(value = "updated_at", forceQuote = true)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(value = "refunded_at", forceQuote = true)
+    @Column(name = "refunded_at")
     private LocalDateTime refundedAt;
 
     public enum PaymentStatus {
@@ -40,20 +39,24 @@ public class Payment {
         REFUNDED
     }
 
-    // Constructor
-    public Payment(Object o, String orderId, BigDecimal amount, PaymentStatus success, String s) {
+    public Payment() {
         this.paymentId = UUID.randomUUID().toString();
         this.createdAt = LocalDateTime.now();
         this.status = PaymentStatus.PENDING;
     }
 
     public Payment(String orderId, BigDecimal amount) {
-        this(null, request.getOrderId(), request.getAmount(), PaymentStatus.SUCCESS, String.valueOf(System.currentTimeMillis()));
+        this();
         this.orderId = orderId;
         this.amount = amount;
     }
 
-    // Getters and Setters
+    public Payment(String orderId, BigDecimal amount, PaymentStatus status) {
+        this(orderId, amount);
+        this.status = status;
+    }
+
+    // Getters and Setters 保持不变
     public String getPaymentId() {
         return paymentId;
     }

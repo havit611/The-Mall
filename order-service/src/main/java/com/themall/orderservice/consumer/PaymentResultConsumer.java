@@ -24,7 +24,7 @@ public class PaymentResultConsumer {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private OrderItemRepository orderItemRepository;  // 新增
+    private OrderItemRepository orderItemRepository;
 
     @Autowired
     private ItemServiceClient itemServiceClient;

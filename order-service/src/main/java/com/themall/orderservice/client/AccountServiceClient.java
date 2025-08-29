@@ -11,7 +11,7 @@ public interface AccountServiceClient {
 
     //  get account info
     @GetMapping("/api/accounts/{accountId}")
-    Account getAccount(@PathVariable String accountId);
+    Account getAccount(@PathVariable("accountId") String accountId);
     
     // DTO for Account Service response
     record Account(String accountId, String username, String email, 

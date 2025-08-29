@@ -17,27 +17,26 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       properties:
-        enable.idempotence: true  # 启用生产者的幂等性功能，消息不会重复发送（即使因网络问题触发了重试）
-        acks: all #最高级别，消息必须被所有ISR(In-Sync Replicas)副本确认
-        retries: 3  # 可选：重试次数
-        properties:
-          max.in.flight.requests.per.connection: 1  #控制单个连接上未确认请求的最大数量 可选：确保消息顺序
+        enable.idempotence: true
+        acks: all
+        retries: 3
+        max.in.flight.requests.per.connection: 1
     consumer:
       group-id: order-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: latest
-      enable-auto-commit: false #禁用消费者自动提交偏移量
+      enable-auto-commit: false
       properties:
-        isolation.level: read_committed #消费者只能读取已成功提交的事务写入的消息
+        isolation.level: read_committed
 
-  # 添加 JWT 配置
-  jwt:
-    secret: mySecretKey123456789012345678901234567890  # 至少32个字符的密钥
-    expiration: 86400000  # token过期时间
-    header: Authorization  # HTTP header名称
-    prefix: Bearer   # token前缀
+
+jwt:
+  secret: 7f3a8d2b9e4c1f6a5d8c3b7e9f2a4d6c8e1b3f5a7d9c2e4b6f8a1d3c5e7b9f2a
+  expiration: 86400000
+  header: Authorization
+  prefix: Bearer
+
 logging:
   level:
     org.springframework.data.cassandra: DEBUG
-

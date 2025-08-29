@@ -38,7 +38,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public Order getOrder(@PathVariable String orderId) {
+    public Order getOrder(@PathVariable("orderId") String orderId) {
         String authenticatedUserId = getCurrentUserId();
 
         Order order = orderService.getOrder(orderId);

@@ -1,27 +1,25 @@
 package com.themall.paymentservice.entity;
 
-import org.springframework.data.cassandra.core.mapping.Column;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Table("processed_messages")
+@Entity
+@Table(name = "processed_messages")
 public class ProcessedMessage {
 
-    @PrimaryKey(value = "message_id", forceQuote = true)
+    @Id
+    @Column(name = "message_id")
     private String messageId;
 
-    @Column(value = "order_id", forceQuote = true)
+    @Column(name = "order_id")
     private String orderId;
 
-    @Column(value = "action", forceQuote = true)
+    @Column(name = "action")
     private String action;
 
-    @Column(value = "processed_at", forceQuote = true)
+    @Column(name = "processed_at")
     private LocalDateTime processedAt;
 
-    // Constructors
     public ProcessedMessage() {
         this.processedAt = LocalDateTime.now();
     }

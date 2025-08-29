@@ -5,16 +5,17 @@ import org.springframework.data.cassandra.core.mapping.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Table("order_items")
 public class OrderItem {
-    
+
     @PrimaryKeyClass
     public static class OrderItemKey implements Serializable {
-        
+
         @PrimaryKeyColumn(name = "order_id", type = PrimaryKeyType.PARTITIONED)
         private String orderId;
-        
+
         @PrimaryKeyColumn(name = "item_id", type = PrimaryKeyType.CLUSTERED)
         private String itemId;
 
@@ -40,20 +41,38 @@ public class OrderItem {
         public void setItemId(String itemId) {
             this.itemId = itemId;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OrderItemKey that = (OrderItemKey) o;
+            return Objects.equals(orderId, that.orderId) &&
+                    Objects.equals(itemId, that.itemId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(orderId, itemId);
+        }
     }
-    
+
     @PrimaryKey
     private OrderItemKey key;
+
     @Column(value = "item_name", forceQuote = true)
     private String itemName;
+
+    @Column(value = "quantity", forceQuote = true)
     private Integer quantity;
+
     @Column(value = "unit_price", forceQuote = true)
     private BigDecimal unitPrice;
 
     public OrderItem() {}
 
-    public OrderItem(String orderId, String itemId, String itemName, 
-                    Integer quantity, BigDecimal unitPrice) {
+    public OrderItem(String orderId, String itemId, String itemName,
+                     Integer quantity, BigDecimal unitPrice) {
         this.key = new OrderItemKey(orderId, itemId);
         this.itemName = itemName;
         this.quantity = quantity;
