@@ -107,29 +107,26 @@ Data Flow
    → Service Layer (business logic + cross-entity validation)   
    → Repository Layer (Spring Data MongoDB)    
    → MongoDB Database (items + inventory collections)    
-2. Data Structure & Relationships    
 
+2. Data Structure & Relationships    
 Dual ID System: MongoDB auto-generated itemId (primary) + business UPC (unique index)  
 Item-Inventory Relationship: One-to-one, linked by itemId  
 Flexible Schema: MongoDB allows dynamic metadata storage via Map<String, Object>  
 Transaction Support: @Transactional ensures atomic item+inventory creation  
 
 3. Data Transformation Flow  
-
 DTO Layer: ItemRequest for input validation  
 Entity Layer: Item and Inventory documents for MongoDB  
 No explicit mapper - manual field copying in service layer  
 Pagination: Spring Data Page wrapper for list responses  
 
 4. Exception Handling Flow  
-
 Validation failures (@Valid) → 400 Bad Request  
 Entity not found → RuntimeException → 500 (no global handler configured)  
 Duplicate UPC → RuntimeException with descriptive message  
 Missing inventory gracefully handled → returns 0 or creates default  
 
 5. Performance Optimizations  
-
 Indexed fields: UPC (unique), itemId (unique on inventory)  
 Pagination prevents loading entire catalog  
 Separate inventory endpoint for lightweight availability checks  
@@ -139,7 +136,7 @@ MongoDB native queries for efficient filtering
 ##### User Flow
 1. Order Creation Flow  
 
-User authenticates via JWT token in Authorization header  
+User authenticates via JWT token in Authorization header 
 JWT filter validates token and extracts userId into Security Context  
 User submits order via POST /api/orders with items and total amount  
 System verifies authenticated userId matches request userId  
@@ -151,22 +148,21 @@ Returns created order with 201 status
 
 
 2. Order Query Flow  
-
 User requests order via GET /api/orders/{orderId} with JWT token  
 System validates token and extracts userId  
 Fetches order from Cassandra  
 Verifies order belongs to authenticated user  
 Returns order details or throws access denied  
-3. Order Cancellation Flow  
 
+3. Order Cancellation Flow  
 User cancels via DELETE /api/orders/{orderId}  
 Authentication and ownership verification  
 Updates order status to CANCELLED  
 Sends cancellation event to Payment Service via Kafka  
 Rollbacks inventory by adding quantities back   
 Returns 204 No Content  
-4. Payment Result Processing (Async)  
 
+4. Payment Result Processing (Async)  
 PaymentResultConsumer listens to payment-result-events topic  
 Updates order status based on payment result:  
 
